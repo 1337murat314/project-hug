@@ -8,6 +8,7 @@ import {
 import { getAllSessionsIncludingArchived as dbGetAllSessionsIncludingArchived } from '@/lib/database';
 import { archiveSession } from '@/lib/database';
 import { archiveAllSessions } from '@/lib/database';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface UserSession {
   id: string;
@@ -217,17 +218,27 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Previously gated on sessionCreated; removed to avoid race conditions
 
       try {
-        // Trigger updated_at change by updating status (don't auto-create if deleted)
-        const result = await updateSession(currentSessionRef.current.id, {
-          status: 'Active',
-          archived: false, // Unarchive if user becomes active again
-        }, false); // Don't recreate if session was deleted
+        // Update last_activity timestamp for heartbeat tracking (don't auto-create if deleted)
+        const result = await supabase
+          .from('user_sessions')
+          .update({
+            last_activity: new Date().toISOString(),
+            status: 'Active',
+            archived: false
+          })
+          .eq('session_id', currentSessionRef.current.id)
+          .select()
+          .single();
         
-        if (!result) {
-          console.log('⚠️ Session deleted by admin - stopping heartbeat');
-          sessionCreated.current = false;
-          return;
+        if (result.error) {
+          if (result.error.code === 'PGRST116') {
+            console.log('⚠️ Session deleted by admin - stopping heartbeat');
+            sessionCreated.current = false;
+            return;
+          }
+          throw result.error;
         }
+        
         
         // Success - session is active in database
       } catch (error) {
