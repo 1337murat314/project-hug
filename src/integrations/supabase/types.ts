@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_credentials: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          password_hash: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          password_hash: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       login_settings: {
         Row: {
           created_at: string
@@ -136,6 +160,10 @@ export type Database = {
       update_login_settings: {
         Args: { p_show_warning?: boolean; p_warning_message?: string }
         Returns: undefined
+      }
+      verify_admin_password: {
+        Args: { admin_email: string; admin_password: string }
+        Returns: boolean
       }
     }
     Enums: {
