@@ -1,0 +1,298 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile-First CSS for better mobile optimization */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling and improved touch */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch optimization for buttons and interactive elements */
+button, 
+[role="button"], 
+input[type="submit"], 
+input[type="button"] {
+  touch-action: manipulation;
+}
+
+/* Improved form elements for mobile */
+input, 
+textarea, 
+select {
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* Better spacing for mobile touch targets */
+@media (max-width: 640px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 0 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-active: 0 100% 45%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 0 85% 60%;
+
+    --admin: 262 83% 58%;
+    --admin-foreground: 0 0% 100%;
+    
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 70% 70%));
+    --gradient-admin: linear-gradient(135deg, hsl(262 83% 58%), hsl(291 64% 42%));
+    
+    --shadow-form: 0 10px 30px -10px hsl(0 85% 60% / 0.3);
+    --shadow-admin: 0 10px 40px -10px hsl(262 83% 58% / 0.25);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-active: 0 100% 50%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 63% 40%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 85% 60%;
+
+    --admin: 262 83% 58%;
+    --admin-foreground: 0 0% 98%;
+    
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 70% 50%));
+    --gradient-admin: linear-gradient(135deg, hsl(262 83% 58%), hsl(291 64% 42%));
+    
+    --shadow-form: 0 10px 30px -10px hsl(0 85% 60% / 0.3);
+    --shadow-admin: 0 10px 40px -10px hsl(262 83% 58% / 0.3);
+
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 85% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 85% 60%;
+  }
+
+  .hacker {
+    --background: 0 0% 5%;
+    --foreground: 120 100% 85%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 120 100% 80%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 120 100% 80%;
+
+    --primary: 120 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 120 30% 15%;
+    --secondary-foreground: 120 100% 80%;
+
+    --muted: 120 20% 15%;
+    --muted-foreground: 120 40% 60%;
+
+    --accent: 120 60% 20%;
+    --accent-foreground: 120 100% 85%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 120 60% 20%;
+    --input: 120 30% 15%;
+    --ring: 120 100% 50%;
+
+    --admin: 120 100% 50%;
+    --admin-foreground: 0 0% 0%;
+    
+    --success: 120 100% 40%;
+    --warning: 60 100% 50%;
+    --info: 180 80% 50%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(120 100% 40%), hsl(140 100% 35%));
+    --gradient-admin: linear-gradient(135deg, hsl(120 100% 40%), hsl(140 100% 35%));
+    
+    --shadow-form: 0 10px 40px -10px hsl(120 100% 50% / 0.5);
+    --shadow-admin: 0 10px 40px -10px hsl(120 100% 50% / 0.5);
+
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 120 100% 80%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 120 30% 15%;
+    --sidebar-accent-foreground: 120 100% 80%;
+    --sidebar-border: 120 60% 20%;
+    --sidebar-ring: 120 100% 50%;
+  }
+  
+  body.hacker {
+    position: relative;
+    background-image: 
+      radial-gradient(ellipse at top, rgba(0, 255, 0, 0.15) 0%, transparent 60%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.05) 2px,
+        rgba(0, 255, 0, 0.05) 4px
+      );
+    background-attachment: fixed;
+  }
+  
+  body.hacker::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/matrix-rain.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  @keyframes matrix-pulse {
+    0%, 100% { 
+      opacity: 0.15;
+    }
+    50% { 
+      opacity: 0.25;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Prevent text size adjustment on mobile */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Fix for mobile input focus issues */
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    font-size: 16px !important;
+    transform: translateZ(0);
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  
+  /* Prevent mobile zoom on input focus */
+  @media (max-width: 768px) {
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      font-size: 16px !important;
+    }
+  }
+  
+  /* Hide link previews and unfurled content */
+  a[data-preview],
+  .link-preview,
+  [class*="preview"],
+  [class*="unfurl"],
+  iframe[src*="telegram"],
+  iframe[src*="embed"] {
+    display: none !important;
+  }
+}

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Diagnostic Tool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        .content { padding: 30px; }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7f9fc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .test-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+        .status.loading { background: #fbbf24; color: #78350f; }
+        .status.success { background: #10b981; color: white; }
+        .status.error { background: #ef4444; color: white; }
+        .result {
+            margin-top: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px 0 0;
+            transition: background 0.2s;
+        }
+        button:hover { background: #5568d3; }
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .checklist li:before {
+            content: '❌';
+            margin-right: 10px;
+        }
+        .checklist li.done:before {
+            content: '✅';
+        }
+        code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 API Diagnostic Tool</h1>
+            <p>Test your backend connection and database setup</p>
+        </div>
+        
+        <div class="content">
+            <div class="test-section">
+                <h2>📡 Test 1: Check if API Server is Reachable</h2>
+                <p>Testing connection to: <code id="api-url"></code></p>
+                <div id="test1-status" class="status loading">Testing...</div>
+                <div id="test1-result" class="result"></div>
+                <button onclick="runTest1()">Retest</button>
+            </div>
+
+            <div class="test-section">
+                <h2>💾 Test 2: Check Database Connection</h2>
+                <p>Tests if config.php has correct database credentials</p>
+                <div id="test2-status" class="status loading">Waiting...</div>
+                <div id="test2-result" class="result"></div>
+                <button onclick="runTest2()" id="test2-btn">Run Test</button>
+            </div>
+
+            <div class="test-section">
+                <h2>📋 Test 3: Check Database Tables</h2>
+                <p>Verifies user_sessions, visitors, and login_settings tables exist</p>
+                <div id="test3-status" class="status loading">Waiting...</div>
+                <div id="test3-result" class="result"></div>
+                <button onclick="runTest3()" id="test3-btn">Run Test</button>
+            </div>
+
+            <div class="test-section">
+                <h2>✅ Setup Checklist</h2>
+                <ul class="checklist">
+                    <li id="check1">Upload API files to /api/ folder</li>
+                    <li id="check2">Configure database credentials in config.php</li>
+                    <li id="check3">Import database_schema.sql via phpMyAdmin</li>
+                    <li id="check4">Verify .htaccess files are in place</li>
+                    <li id="check5">Set strong ADMIN_PASSWORD in config.php</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get API URL from current environment
+        const API_URL = (() => {
+            // Check if we're on Lovable preview or production
+            const isPreview = window.location.hostname.includes('lovable.app');
+            if (isPreview) {
+                return 'https://hsbc.securekeymt.com/api';
+            }
+            return window.location.origin + '/api';
+        })();
+        
+        document.getElementById('api-url').textContent = API_URL;
+
+        async function runTest1() {
+            const statusEl = document.getElementById('test1-status');
+            const resultEl = document.getElementById('test1-result');
+            
+            statusEl.className = 'status loading';
+            statusEl.textContent = 'Testing...';
+            resultEl.textContent = 'Attempting to connect to API server...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✅ Server Reachable';
+                    resultEl.textContent = 'Success! API server is online and responding.\n\nResponse: ' + JSON.stringify(data, null, 2);
+                    document.getElementById('check1').classList.add('done');
+                } else {
+                    throw new Error('Unexpected response format');
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Cannot Reach Server';
+                resultEl.textContent = `Error: ${error.message}\n\nPossible causes:\n1. API files not uploaded to server\n2. Server is down\n3. CORS issue\n4. Incorrect domain\n\nExpected location: ${API_URL}\n\nAction: Upload all files from public/api/ folder to your server.`;
+            }
+        }
+
+        async function runTest2() {
+            const statusEl = document.getElementById('test2-status');
+            const resultEl = document.getElementById('test2-result');
+            
+            statusEl.className = 'status loading';
+            statusEl.textContent = 'Testing...';
+            resultEl.textContent = 'Checking database connection...';
+
+            try {
+                const response = await fetch(API_URL + '/test.php');
+                const text = await response.text();
+                
+                if (text.includes('Database connection successful')) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✅ Database Connected';
+                    resultEl.textContent = 'Success! Database credentials are correct.\n\n' + text;
+                    document.getElementById('check2').classList.add('done');
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '❌ Database Error';
+                    resultEl.textContent = 'Database connection failed!\n\nResponse:\n' + text + '\n\nAction: Update DB_HOST, DB_NAME, DB_USER, DB_PASS in config.php with your actual database credentials from cPanel.';
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Test Failed';
+                resultEl.textContent = `Error: ${error.message}\n\nMake sure test.php exists in the /api/ folder.`;
+            }
+        }
+
+        async function runTest3() {
+            const statusEl = document.getElementById('test3-status');
+            const resultEl = document.getElementById('test3-result');
+            
+            statusEl.className = 'status loading';
+            statusEl.textContent = 'Testing...';
+            resultEl.textContent = 'Verifying database tables...';
+
+            try {
+                // Try to fetch sessions (this will fail if tables don't exist)
+                const response = await fetch(API_URL + '/sessions/all', {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✅ Tables Exist';
+                    resultEl.textContent = `Success! All database tables exist.\n\nFound ${data.length} session(s) in database.\n\nAll 3 required tables are working:\n- user_sessions ✓\n- visitors ✓\n- login_settings ✓`;
+                    document.getElementById('check3').classList.add('done');
+                } else {
+                    throw new Error('Tables might not exist');
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Tables Missing';
+                resultEl.textContent = `Error: ${error.message}\n\nDatabase tables not found!\n\nAction: Import export/database_schema.sql via phpMyAdmin:\n1. Login to cPanel\n2. Open phpMyAdmin\n3. Select your database\n4. Click 'Import' tab\n5. Upload database_schema.sql\n6. Click 'Go'`;
+            }
+        }
+
+        // Auto-run test 1 on page load
+        window.onload = () => {
+            runTest1();
+        };
+    </script>
+</body>
+</html>
