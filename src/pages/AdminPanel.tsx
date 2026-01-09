@@ -481,8 +481,8 @@ const AdminPanel = () => {
       
       // Use RPC function to bypass RLS
       const { error } = await supabase.rpc('update_login_settings', {
-        new_warning_message: editingWarning,
-        new_show_warning: editingWarning.trim().length > 0 // Show warning if message is not empty
+        p_warning_message: editingWarning,
+        p_show_warning: editingWarning.trim().length > 0 // Show warning if message is not empty
       });
 
       if (error) throw error;
