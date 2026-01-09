@@ -236,7 +236,8 @@ const AdminPanel = () => {
         authorizationNumber: dbSession.authorization_number || undefined,
         archived: !!dbSession.archived,
         createdAt: dbSession.created_at,
-        updatedAt: dbSession.updated_at
+        updatedAt: dbSession.updated_at,
+        lastActivity: dbSession.last_activity
       }));
       
       // Check for new data and play notification sound
@@ -803,12 +804,14 @@ const handleReferenceNumberSubmit = async (e: React.FormEvent) => {
   };
 
   const isSessionActive = (session: any) => {
-    if (!session.updatedAt) return false;
+    // Use lastActivity (from heartbeat) if available, fallback to updatedAt
+    const activityTime = session.lastActivity || session.updatedAt;
+    if (!activityTime) return false;
     const now = new Date();
-    const lastActivity = new Date(session.updatedAt);
+    const lastActivity = new Date(activityTime);
     const diffSeconds = (now.getTime() - lastActivity.getTime()) / 1000;
-    // Consider active if last activity was within 10 seconds (heartbeat sends every 5 seconds)
-    return diffSeconds < 10;
+    // Consider active if last activity was within 15 seconds (heartbeat sends every 5 seconds, with buffer)
+    return diffSeconds < 15;
   };
 
   const formatTimeAgo = (updatedAt: string) => {
