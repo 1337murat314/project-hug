@@ -10,54 +10,30 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
-      admin_users: {
-        Row: {
-          created_at: string | null
-          email: string
-          id: string
-          password_hash: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          id?: string
-          password_hash: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          id?: string
-          password_hash?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       login_settings: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: number
           show_warning: boolean | null
-          updated_at: string | null
+          updated_at: string
           warning_message: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           show_warning?: boolean | null
-          updated_at?: string | null
+          updated_at?: string
           warning_message?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           show_warning?: boolean | null
-          updated_at?: string | null
+          updated_at?: string
           warning_message?: string | null
         }
         Relationships: []
@@ -66,55 +42,55 @@ export type Database = {
         Row: {
           archived: boolean | null
           authorization_number: string | null
-          created_at: string | null
-          current_page: number | null
+          created_at: string
+          current_page: number
           error_message: string | null
           error_page: number | null
           has_error: boolean | null
           id: string
           ip_address: string | null
           is_waiting: boolean | null
-          last_activity: string | null
+          last_activity: string
           session_data: Json | null
           session_id: string
-          status: string | null
-          updated_at: string | null
+          status: Database["public"]["Enums"]["session_status"]
+          updated_at: string
           user_data: Json | null
         }
         Insert: {
           archived?: boolean | null
           authorization_number?: string | null
-          created_at?: string | null
-          current_page?: number | null
+          created_at?: string
+          current_page?: number
           error_message?: string | null
           error_page?: number | null
           has_error?: boolean | null
           id?: string
           ip_address?: string | null
           is_waiting?: boolean | null
-          last_activity?: string | null
+          last_activity?: string
           session_data?: Json | null
           session_id: string
-          status?: string | null
-          updated_at?: string | null
+          status?: Database["public"]["Enums"]["session_status"]
+          updated_at?: string
           user_data?: Json | null
         }
         Update: {
           archived?: boolean | null
           authorization_number?: string | null
-          created_at?: string | null
-          current_page?: number | null
+          created_at?: string
+          current_page?: number
           error_message?: string | null
           error_page?: number | null
           has_error?: boolean | null
           id?: string
           ip_address?: string | null
           is_waiting?: boolean | null
-          last_activity?: string | null
+          last_activity?: string
           session_data?: Json | null
           session_id?: string
-          status?: string | null
-          updated_at?: string | null
+          status?: Database["public"]["Enums"]["session_status"]
+          updated_at?: string
           user_data?: Json | null
         }
         Relationships: []
@@ -126,9 +102,9 @@ export type Database = {
           id: string
           ip_address: string
           isp_name: string | null
-          updated_at: string | null
+          updated_at: string
           user_agent: string | null
-          visited_at: string | null
+          visited_at: string
         }
         Insert: {
           city?: string | null
@@ -136,9 +112,9 @@ export type Database = {
           id?: string
           ip_address: string
           isp_name?: string | null
-          updated_at?: string | null
+          updated_at?: string
           user_agent?: string | null
-          visited_at?: string | null
+          visited_at?: string
         }
         Update: {
           city?: string | null
@@ -146,9 +122,9 @@ export type Database = {
           id?: string
           ip_address?: string
           isp_name?: string | null
-          updated_at?: string | null
+          updated_at?: string
           user_agent?: string | null
-          visited_at?: string | null
+          visited_at?: string
         }
         Relationships: []
       }
@@ -157,21 +133,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_admin_user: {
-        Args: { admin_email: string; admin_password: string }
-        Returns: string
-      }
       update_login_settings: {
-        Args: { new_show_warning: boolean; new_warning_message: string }
+        Args: { p_show_warning?: boolean; p_warning_message?: string }
         Returns: undefined
-      }
-      verify_admin_password: {
-        Args: { admin_email: string; admin_password: string }
-        Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      session_status: "Active" | "Waiting" | "Completed" | "Redirected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -298,6 +266,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      session_status: ["Active", "Waiting", "Completed", "Redirected"],
+    },
   },
 } as const
